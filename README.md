@@ -1,5 +1,5 @@
 # Ex.05 Design a Website for Server Side Processing
-## Date:
+## Date:29.09.2025
 
 ## AIM:
  To design a website to calculate the power of a lamp filament in an incandescent bulb in the server side. 
@@ -32,13 +32,116 @@ Create a HTML file to implement form based input and output.
 Publish the website in the given URL.
 
 ## PROGRAM :
+~~~
+math.html
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Power Calculation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: rgb(165, 18, 140);
+        }
+        input[type="text"], input[type="submit"] {
+            padding: 8px;
+            margin: 8px 0;
+            width: 200px;
+            background-color: rgb(222, 235, 31);
+        }
+        .result {
+            margin-top: 50px;
+            font-weight: bold;
+            background-color: rgb(113, 224, 246);
+        }
+        .error {
+            color: rgb(144, 22, 95);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Calculate Power (P = I² × R)</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <label for="current">Current (I in Amps):</label><br>
+        <input type="text" id="current" name="current" placeholder="Enter current"><br>
+
+        <label for="resistance">Resistance (R in Ohms):</label><br>
+        <input type="text" id="resistance" name="resistance" placeholder="Enter resistance"><br>
+
+        <input type="submit" value="Calculate Power">
+    </form>
+
+    {% if power %}
+        <div class="result">
+            Power = {{ power }} Watts
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="error">
+            Error: {{ error }}
+        </div>
+    {% endif %}
+
+</body>
+</html>
+
+views.py
+
+from django.shortcuts import render
+
+def calculate_power(request):
+    power = None
+    error = None
+
+    if request.method == 'POST':
+        print("Request method is used")
+
+        try:
+            current = float(request.POST.get('current'))
+            resistance = float(request.POST.get('resistance'))
+
+            power = (current ** 2) * resistance
+
+            print("Current:", current)
+            print("Resistance:", resistance)
+            print("Power:", power)
+
+        except (TypeError, ValueError):
+            error = "Please enter valid numeric values."
+            print("Invalid input received.")
+
+    return render(request, 'mathapp/math.html', {
+        'power': power,
+        'error': error
+    })
+
+urls.py
+
+from django.contrib import admin
+from django.urls import path
+from mathapp import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', views.calculate_power, name='calculate_power') # root URL
+]
+
+
+~~~
 
 ## SERVER SIDE PROCESSING:
-
+![alt text](<Screenshot 2025-09-29 161455.png>)
 
 ## HOMEPAGE:
-
+![alt text](<Screenshot 2025-09-29 161427.png>)
 
 ## RESULT:
 The program for performing server side processing is completed successfully.
